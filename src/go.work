@@ -1,0 +1,20 @@
+go 1.24.2
+
+use (
+	.
+	./api
+	./environment
+	./form
+	./library
+	./mcp
+	./media
+	./metrics
+	./models
+	./rabbitmq
+	./signalr
+	./sipproxy
+	./swagger
+	./webserver
+	./whatsapp
+	./whatsmeow
+)
