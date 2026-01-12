@@ -174,6 +174,9 @@ func RegisterAPIControllers(r chi.Router) {
 		// Updates the group description.
 		r.Put(endpoint+"/groups/description", SetGroupTopicController)
 
+		// Set announcement group mode.
+		r.Put(endpoint+"/groups/announcementmode", SetGroupAnnounceModeController)
+
 		// Updates the group picture.
 		r.Put(endpoint+"/groups/photo", SetGroupPhotoController)
 

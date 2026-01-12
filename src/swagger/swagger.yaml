@@ -1665,6 +1665,39 @@ paths:
       summary: Set group topic
       tags:
       - Groups
+  /groups/announcementmode:
+    put:
+      consumes:
+      - application/json
+      description: Defines the group as an announcement WhatsApp group (Only admins can send messages)
+      parameters:
+      - description: Set announcement group mode request
+        in: body
+        name: request
+        required: true
+        schema:
+          properties:
+            group_jid:
+              type: string
+            announce:
+              type: bool
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.QpSingleGroupResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.QpResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Set announcement group mode
+      tags:
+      - Groups
   /groups/get:
     get:
       consumes:

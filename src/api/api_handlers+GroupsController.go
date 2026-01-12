@@ -601,6 +601,65 @@ func SetGroupTopicController(w http.ResponseWriter, r *http.Request) {
 	RespondSuccess(w, response)
 }
 
+// SetGroupAnnounceModeController defines the group as an announcement WhatsApp group
+//
+//	@Summary		Set announcement group mode
+//	@Description	Defines the group as an announcement WhatsApp group (Only admins can send messages)
+//	@Tags			Groups
+//	@Accept			json
+//	@Produce		json
+//	@Param			request	body		object{group_jid=string,announce=bool}	true	"Set announcement group mode request"
+//	@Success		200		{object}	models.QpSingleGroupResponse
+//	@Failure		400		{object}	models.QpResponse
+//	@Security		ApiKeyAuth
+//	@Router			/groups/announcementmode [put]
+func SetGroupAnnounceModeController(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
+	response := &models.QpSingleGroupResponse{}
+
+	type setGroupAnnounceModeStruct struct {
+		GroupJID string `json:"group_jid"`
+		Announce    string `json:"announce"`
+	}
+
+	server, err := GetServer(r)
+	if err != nil {
+		response.ParseError(err)
+		RespondInterface(w, response)
+		return
+	}
+
+	decoder := json.NewDecoder(r.Body)
+	var t setGroupTopicStruct
+	err = decoder.Decode(&t)
+	if err != nil {
+		response.ParseError(fmt.Errorf("could not decode payload: %v", err))
+		RespondInterface(w, response)
+		return
+	}
+
+	if t.GroupJID == "" {
+		response.ParseError(fmt.Errorf("group JID is required"))
+		RespondInterface(w, response)
+		return
+	}
+
+	// Convert string JID to appropriate format
+	groupID := t.GroupJID
+
+	updatedGroup, err := server.GetGroupManager().SetGroupAnnounceMode(groupID, t.Announce)
+	if err != nil {
+		response.ParseError(fmt.Errorf("failed to set group announce mode: %v", err))
+		RespondInterface(w, response)
+		return
+	}
+
+	response.GroupInfo = updatedGroup
+
+	RespondSuccess(w, response)
+}
+
 // LeaveGroupController allows the bot to leave a WhatsApp group
 //
 //	@Summary		Leave group

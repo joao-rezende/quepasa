@@ -107,6 +107,16 @@ func (gm *QpGroupManager) UpdateGroupTopic(groupID string, topic string) (interf
 	return groupManager.UpdateGroupTopic(groupID, topic)
 }
 
+// SetGroupAnnounceMode defines the group as an announcement group
+func (gm *QpGroupManager) SetGroupAnnounceMode(groupID string, announce bool) (interface{}, error) {
+	groupManager, err := gm.getGroupManager()
+	if err != nil {
+		return nil, err
+	}
+
+	return groupManager.SetGroupAnnounceMode(groupID, announce)
+}
+
 // UpdateGroupPhoto updates the photo of a group
 func (gm *QpGroupManager) UpdateGroupPhoto(groupID string, imageData []byte) (string, error) {
 	groupManager, err := gm.getGroupManager()

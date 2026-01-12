@@ -174,4 +174,4 @@ For other group management operations, see:
 - Group creation: `POST /v3/groups/create`
 - Group info: `GET /v3/groups/get`
 - Group participants: `PUT /v3/groups/participants`
-- Group settings: `PUT /v3/groups/name`, `PUT /v3/groups/description`, `PUT /v3/groups/photo`
+- Group settings: `PUT /v3/groups/name`, `PUT /v3/groups/description`, `PUT /v3/groups/photo`, `PUT /v3/groups/announcementmode`

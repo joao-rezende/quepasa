@@ -653,6 +653,59 @@ const docTemplate = `{
                 }
             }
         },
+        "/groups/announcementmode": {
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Defines the group as an announcement WhatsApp group (Only admins can send messages)",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Groups"
+                ],
+                "summary": "Set announcement group mode",
+                "parameters": [
+                    {
+                        "description": "Set announcement group mode request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "group_jid": {
+                                    "type": "string"
+                                },
+                                "announce": {
+                                    "type": "bool"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.QpSingleGroupResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.QpResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/groups/get": {
             "get": {
                 "security": [

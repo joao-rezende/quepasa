@@ -48,6 +48,7 @@ var HandlerRegistry = map[string]http.HandlerFunc{
 	"UpdateGroupParticipantsController": api.UpdateGroupParticipantsController,
 	"GroupMembershipRequestsController": api.GroupMembershipRequestsController,
 	"SetGroupTopicController":           api.SetGroupTopicController,
+	"SetGroupAnnounceModeController":    api.SetGroupAnnounceModeController,
 	"LeaveGroupController":              api.LeaveGroupController,
 
 	// Invite

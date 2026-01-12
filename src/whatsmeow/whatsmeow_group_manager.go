@@ -278,6 +278,29 @@ func (gm *WhatsmeowGroupManager) UpdateGroupTopic(groupID string, topic string) 
 	return client.GetGroupInfo(context.Background(), jid)
 }
 
+// SetGroupAnnounceMode defines the group as an announcement group
+func (gm *WhatsmeowGroupManager) SetGroupAnnounceMode(groupID string, announce bool) (interface{}, error) {
+	client := gm.GetClient()
+	if client == nil {
+		return nil, fmt.Errorf("client not defined")
+	}
+
+	// Parse the group ID to JID format
+	jid, err := types.ParseJID(groupID)
+	if err != nil {
+		return nil, fmt.Errorf("invalid group JID format: %v", err)
+	}
+
+	// Update the group announce mode (only admins can send messages)
+	err = client.SetGroupAnnounce(context.Background(), jid, announce)
+	if err != nil {
+		return nil, fmt.Errorf("failed to update group announce mode: %v", err)
+	}
+
+	// Return the updated group info
+	return client.GetGroupInfo(context.Background(), jid)
+}
+
 // UpdateGroupParticipants adds, removes, promotes, or demotes participants in a group
 func (gm *WhatsmeowGroupManager) UpdateGroupParticipants(groupJID string, participants []string, action string) ([]interface{}, error) {
 	client := gm.GetClient()

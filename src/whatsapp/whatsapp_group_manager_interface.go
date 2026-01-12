@@ -27,6 +27,9 @@ type WhatsappGroupManagerInterface interface {
 	// Update Group Topic (Description)
 	UpdateGroupTopic(string, string) (interface{}, error)
 
+	// Set Group Announce Mode (Only admins can send messages)
+	SetGroupAnnounceMode(string, string) (interface{}, error)
+
 	// Update Group Photo
 	UpdateGroupPhoto(string, []byte) (string, error)
 
