@@ -408,12 +408,53 @@ func (gm *WhatsmeowGroupManager) HandleGroupJoinRequests(groupJID string, partic
 
 // CreateGroupExtendedWithOptions creates a new group with extended options (map-based)
 func (gm *WhatsmeowGroupManager) CreateGroupExtendedWithOptions(options map[string]interface{}) (interface{}, error) {
+	client := gm.GetClient()
+	if client == nil {
+		return nil, fmt.Errorf("client not defined")
+	}
+
 	// Extract parameters from options map
 	title, _ := options["title"].(string)
 	participantsRaw, _ := options["participants"].([]string)
+	locked, _ := options["locked"].(bool)
+	announce, _ := options["announce"].(bool)
+	memberAddMode, _ := options["member_add_mode"].(string)
+	joinApprovalRequired, _ := options["join_approval_required"].(bool)
 
-	// Call the existing CreateGroupExtended method
-	return gm.CreateGroupExtended(title, participantsRaw)
+	// Convert participants to JIDs
+	participantJIDs := make([]types.JID, len(participantsRaw))
+	for i, participant := range participantsRaw {
+		jid, err := types.ParseJID(participant)
+		if err != nil {
+			return nil, fmt.Errorf("invalid participant JID: %v", err)
+		}
+		participantJIDs[i] = jid
+	}
+
+	// Build request with all options
+	req := whatsmeow.ReqCreateGroup{
+		Name:         title,
+		Participants: participantJIDs,
+	}
+	req.IsLocked = locked
+	req.IsAnnounce = announce
+	req.IsJoinApprovalRequired = joinApprovalRequired
+
+	// Create the group
+	groupInfo, err := client.CreateGroup(context.TODO(), req)
+	if err != nil {
+		return nil, err
+	}
+
+	// Apply member add mode after creation if specified
+	if memberAddMode != "" {
+		mode := types.GroupMemberAddMode(memberAddMode)
+		if err := client.SetGroupMemberAddMode(context.TODO(), groupInfo.JID, mode); err != nil {
+			return nil, fmt.Errorf("group created but failed to set member_add_mode: %v", err)
+		}
+	}
+
+	return groupInfo, nil
 }
 
 // LeaveGroup leaves a group by group ID

@@ -551,7 +551,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Creates a new WhatsApp group with specified title and participants",
+                "description": "Creates a new WhatsApp group with specified title, participants and permissions",
                 "consumes": [
                     "application/json"
                 ],
@@ -564,13 +564,25 @@ const docTemplate = `{
                 "summary": "Create a new group",
                 "parameters": [
                     {
-                        "description": "Group creation request",
+                        "description": "Group creation request. locked: only admins can edit settings; announce: only admins can send messages; member_add_mode: 'admin_add' or 'all_member_add'; join_approval_required: require approval to join via link",
                         "name": "request",
                         "in": "body",
                         "required": true,
                         "schema": {
                             "type": "object",
                             "properties": {
+                                "announce": {
+                                    "type": "boolean"
+                                },
+                                "join_approval_required": {
+                                    "type": "boolean"
+                                },
+                                "locked": {
+                                    "type": "boolean"
+                                },
+                                "member_add_mode": {
+                                    "type": "string"
+                                },
                                 "participants": {
                                     "type": "array",
                                     "items": {
@@ -2667,6 +2679,10 @@ const docTemplate = `{
                 "master_key": {
                     "type": "string"
                 },
+                "password": {
+                    "description": "default password for database seeding",
+                    "type": "string"
+                },
                 "prefix": {
                     "type": "string"
                 },
@@ -2679,6 +2695,10 @@ const docTemplate = `{
                 },
                 "use_ssl_websocket": {
                     "type": "boolean"
+                },
+                "user": {
+                    "description": "default user for database seeding",
+                    "type": "string"
                 },
                 "webhook_timeout": {
                     "description": "webhook timeout in milliseconds",

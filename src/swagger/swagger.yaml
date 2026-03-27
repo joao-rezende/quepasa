@@ -170,6 +170,9 @@ definitions:
     properties:
       master_key:
         type: string
+      password:
+        description: default password for database seeding
+        type: string
       prefix:
         type: string
       signing_secret:
@@ -179,6 +182,9 @@ definitions:
         type: integer
       use_ssl_websocket:
         type: boolean
+      user:
+        description: default user for database seeding
+        type: string
       webhook_timeout:
         description: webhook timeout in milliseconds
         type: integer
@@ -1601,14 +1607,26 @@ paths:
     post:
       consumes:
       - application/json
-      description: Creates a new WhatsApp group with specified title and participants
+      description: Creates a new WhatsApp group with specified title, participants
+        and permissions
       parameters:
-      - description: Group creation request
+      - description: 'Group creation request. locked: only admins can edit settings;
+          announce: only admins can send messages; member_add_mode: ''admin_add''
+          or ''all_member_add''; join_approval_required: require approval to join
+          via link'
         in: body
         name: request
         required: true
         schema:
           properties:
+            announce:
+              type: boolean
+            join_approval_required:
+              type: boolean
+            locked:
+              type: boolean
+            member_add_mode:
+              type: string
             participants:
               items:
                 type: string

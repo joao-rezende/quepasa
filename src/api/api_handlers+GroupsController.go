@@ -111,11 +111,11 @@ func FetchAllGroupsController(w http.ResponseWriter, r *http.Request) {
 // CreateGroupController creates a new WhatsApp group
 //
 //	@Summary		Create a new group
-//	@Description	Creates a new WhatsApp group with specified title and participants
+//	@Description	Creates a new WhatsApp group with specified title, participants and permissions
 //	@Tags			Groups
 //	@Accept			json
 //	@Produce		json
-//	@Param			request	body		object{title=string,participants=[]string}	true	"Group creation request"
+//	@Param			request	body		object{title=string,participants=[]string,locked=bool,announce=bool,member_add_mode=string,join_approval_required=bool}	true	"Group creation request. locked: only admins can edit settings; announce: only admins can send messages; member_add_mode: 'admin_add' or 'all_member_add'; join_approval_required: require approval to join via link"
 //	@Success		200		{object}	models.QpSingleGroupResponse
 //	@Failure		400		{object}	models.QpResponse
 //	@Security		ApiKeyAuth
@@ -138,6 +138,16 @@ func CreateGroupController(w http.ResponseWriter, r *http.Request) {
 	var request struct {
 		Title        string   `json:"title"`
 		Participants []string `json:"participants"`
+
+		// Group permissions:
+		// Locked: when true, only admins can edit group settings (name, image, description, etc.)
+		Locked bool `json:"locked"`
+		// Announce: when true, only admins can send messages in the group
+		Announce bool `json:"announce"`
+		// MemberAddMode: controls who can add members directly; "admin_add" or "all_member_add"
+		MemberAddMode string `json:"member_add_mode"`
+		// JoinApprovalRequired: when true, admin approval is required to join via invite link
+		JoinApprovalRequired bool `json:"join_approval_required"`
 	}
 
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
@@ -166,13 +176,24 @@ func CreateGroupController(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Validate member_add_mode if provided
+	if request.MemberAddMode != "" && request.MemberAddMode != "admin_add" && request.MemberAddMode != "all_member_add" {
+		response.ParseError(fmt.Errorf("member_add_mode must be 'admin_add' or 'all_member_add'"))
+		RespondInterface(w, response)
+		return
+	}
+
 	// Convert phone numbers to proper WID format
 	formattedParticipants := whatsapp.PhonesToWids(request.Participants)
 
 	// Build extended options for group creation
 	options := map[string]interface{}{
-		"title":        request.Title,
-		"participants": formattedParticipants,
+		"title":                  request.Title,
+		"participants":           formattedParticipants,
+		"locked":                 request.Locked,
+		"announce":               request.Announce,
+		"member_add_mode":        request.MemberAddMode,
+		"join_approval_required": request.JoinApprovalRequired,
 	}
 
 	// Create group using the interface method with properly formatted participants and options
