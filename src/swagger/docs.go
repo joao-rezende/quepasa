@@ -2679,10 +2679,6 @@ const docTemplate = `{
                 "master_key": {
                     "type": "string"
                 },
-                "password": {
-                    "description": "default password for database seeding",
-                    "type": "string"
-                },
                 "prefix": {
                     "type": "string"
                 },
@@ -2695,10 +2691,6 @@ const docTemplate = `{
                 },
                 "use_ssl_websocket": {
                     "type": "boolean"
-                },
-                "user": {
-                    "description": "default user for database seeding",
-                    "type": "string"
                 },
                 "webhook_timeout": {
                     "description": "webhook timeout in milliseconds",
