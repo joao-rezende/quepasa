@@ -138,15 +138,9 @@ func CreateGroupController(w http.ResponseWriter, r *http.Request) {
 	var request struct {
 		Title        string   `json:"title"`
 		Participants []string `json:"participants"`
-
-		// Group permissions:
-		// Locked: when true, only admins can edit group settings (name, image, description, etc.)
 		Locked bool `json:"locked"`
-		// Announce: when true, only admins can send messages in the group
 		Announce bool `json:"announce"`
-		// MemberAddMode: controls who can add members directly; "admin_add" or "all_member_add"
 		MemberAddMode string `json:"member_add_mode"`
-		// JoinApprovalRequired: when true, admin approval is required to join via invite link
 		JoinApprovalRequired bool `json:"join_approval_required"`
 	}
 
