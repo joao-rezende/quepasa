@@ -805,6 +805,8 @@ definitions:
           type: string
         type: array
       groupinfo: {}
+      invite_link:
+        type: string
       status:
         type: string
       success:
@@ -1140,6 +1142,9 @@ definitions:
       inreply:
         description: Msg in reply of another ? Message ID
         type: string
+      invideonote:
+        description: Is this video message a video note (PTV Message)?
+        type: boolean
       location:
         allOf:
         - $ref: '#/definitions/whatsapp.WhatsappLocation'
@@ -1672,6 +1677,50 @@ paths:
       security:
       - ApiKeyAuth: []
       summary: Create a new group
+      tags:
+      - Groups
+  /groups/createadvanced:
+    post:
+      consumes:
+      - application/json
+      description: Creates a new WhatsApp group with specified title, participants,
+        and optional permission settings
+      parameters:
+      - description: Advanced group creation request
+        in: body
+        name: request
+        required: true
+        schema:
+          properties:
+            all_members_can_add_members:
+              type: boolean
+            all_members_can_edit_info:
+              type: boolean
+            all_members_can_send_messages:
+              type: boolean
+            invite_link:
+              type: boolean
+            participants:
+              items:
+                type: string
+              type: array
+            title:
+              type: string
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.QpSingleGroupResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.QpResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Create a new group with advanced settings
       tags:
       - Groups
   /groups/description:

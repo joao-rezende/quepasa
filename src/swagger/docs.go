@@ -601,6 +601,74 @@ const docTemplate = `{
                 }
             }
         },
+        "/groups/createadvanced": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Creates a new WhatsApp group with specified title, participants, and optional permission settings",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Groups"
+                ],
+                "summary": "Create a new group with advanced settings",
+                "parameters": [
+                    {
+                        "description": "Advanced group creation request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "all_members_can_add_members": {
+                                    "type": "boolean"
+                                },
+                                "all_members_can_edit_info": {
+                                    "type": "boolean"
+                                },
+                                "all_members_can_send_messages": {
+                                    "type": "boolean"
+                                },
+                                "invite_link": {
+                                    "type": "boolean"
+                                },
+                                "participants": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string"
+                                    }
+                                },
+                                "title": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.QpSingleGroupResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.QpResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/groups/description": {
             "put": {
                 "security": [
@@ -3702,6 +3770,9 @@ const docTemplate = `{
                     }
                 },
                 "groupinfo": {},
+                "invite_link": {
+                    "type": "string"
+                },
                 "status": {
                     "type": "string"
                 },
@@ -4189,6 +4260,10 @@ const docTemplate = `{
                 "inreply": {
                     "description": "Msg in reply of another ? Message ID",
                     "type": "string"
+                },
+                "invideonote": {
+                    "description": "Is this video message a video note (PTV Message)?",
+                    "type": "boolean"
                 },
                 "location": {
                     "description": "Location if exists",

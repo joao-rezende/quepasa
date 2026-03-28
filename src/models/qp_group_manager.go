@@ -171,6 +171,17 @@ func (gm *QpGroupManager) CreateGroupExtendedWithOptions(options map[string]inte
 	return groupManager.CreateGroupExtended(title, participantsRaw)
 }
 
+// CreateGroupWithSettings creates a new group with additional permission settings.
+// Returns the group info and, when settings.GenerateInviteLink is true, the invite link.
+func (gm *QpGroupManager) CreateGroupWithSettings(title string, participants []string, settings whatsapp.QpGroupSettings) (interface{}, string, error) {
+	groupManager, err := gm.getGroupManager()
+	if err != nil {
+		return nil, "", err
+	}
+
+	return groupManager.CreateGroupWithSettings(title, participants, settings)
+}
+
 // LeaveGroup leaves a group by group ID
 func (gm *QpGroupManager) LeaveGroup(groupID string) error {
 	groupManager, err := gm.getGroupManager()

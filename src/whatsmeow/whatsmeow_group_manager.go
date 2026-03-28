@@ -416,6 +416,73 @@ func (gm *WhatsmeowGroupManager) CreateGroupExtendedWithOptions(options map[stri
 	return gm.CreateGroupExtended(title, participantsRaw)
 }
 
+// CreateGroupWithSettings creates a new group with additional permission settings.
+// Returns the group info and, when settings.GenerateInviteLink is true, the invite link.
+func (gm *WhatsmeowGroupManager) CreateGroupWithSettings(title string, participants []string, settings whatsapp.QpGroupSettings) (interface{}, string, error) {
+	client := gm.GetClient()
+	if client == nil {
+		return nil, "", fmt.Errorf("client not defined")
+	}
+
+	// Convert participants to JIDs
+	participantJIDs := make([]types.JID, len(participants))
+	for i, participant := range participants {
+		jid, err := types.ParseJID(participant)
+		if err != nil {
+			return nil, "", fmt.Errorf("invalid participant JID: %v", err)
+		}
+		participantJIDs[i] = jid
+	}
+
+	// Build the creation request with optional settings
+	req := whatsmeow.ReqCreateGroup{
+		Name:         title,
+		Participants: participantJIDs,
+	}
+
+	// IsLocked = true means only admins can edit group info.
+	// AllMembersCanEditInfo = true → IsLocked = false (unlocked).
+	if settings.AllMembersCanEditInfo != nil {
+		req.IsLocked = !*settings.AllMembersCanEditInfo
+	}
+
+	// IsAnnounce = true means only admins can send messages.
+	// AllMembersCanSendMessages = true → IsAnnounce = false.
+	if settings.AllMembersCanSendMessages != nil {
+		req.IsAnnounce = !*settings.AllMembersCanSendMessages
+	}
+
+	// Create the group
+	groupInfo, err := client.CreateGroup(context.TODO(), req)
+	if err != nil {
+		return nil, "", err
+	}
+
+	// Apply member-add mode if requested (requires a separate call after creation)
+	if settings.AllMembersCanAddMembers != nil {
+		mode := types.GroupMemberAddModeAdmin
+		if *settings.AllMembersCanAddMembers {
+			mode = types.GroupMemberAddModeAllMember
+		}
+		if modeErr := client.SetGroupMemberAddMode(context.TODO(), groupInfo.JID, mode); modeErr != nil {
+			gm.GetLogger().Warnf("failed to set member add mode for group %s: %v", groupInfo.JID, modeErr)
+		}
+	}
+
+	// Retrieve invite link if requested
+	inviteLink := ""
+	if settings.GenerateInviteLink {
+		link, linkErr := client.GetGroupInviteLink(context.TODO(), groupInfo.JID, false)
+		if linkErr != nil {
+			gm.GetLogger().Warnf("failed to get invite link for group %s: %v", groupInfo.JID, linkErr)
+		} else {
+			inviteLink = link
+		}
+	}
+
+	return groupInfo, inviteLink, nil
+}
+
 // LeaveGroup leaves a group by group ID
 func (gm *WhatsmeowGroupManager) LeaveGroup(groupID string) error {
 	client := gm.GetClient()
