@@ -1,25 +1,11 @@
 package whatsapp
 
 // QpGroupSettings holds optional settings for group creation.
-// All boolean pointer fields are optional; nil means use the WhatsApp default.
 type QpGroupSettings struct {
-	// AllMembersCanEditInfo controls whether all members or only admins can edit group info.
-	// nil = WhatsApp default; false = only admins; true = all members.
 	AllMembersCanEditInfo *bool
-
-	// AllMembersCanSendMessages controls whether all members or only admins can send messages.
-	// nil = WhatsApp default; true = all members; false = only admins.
 	AllMembersCanSendMessages *bool
-
-	// AllMembersCanAddMembers controls whether all members or only admins can add new members.
-	// nil = WhatsApp default; true = all members; false = only admins.
 	AllMembersCanAddMembers *bool
-
-	// JoinApprovalRequired controls whether new members must be approved before joining.
-	// nil = WhatsApp default; true = approval required; false = no approval needed.
 	JoinApprovalRequired *bool
-
-	// GenerateInviteLink if true, generates and returns the group invite link after creation.
 	GenerateInviteLink bool
 }
 
