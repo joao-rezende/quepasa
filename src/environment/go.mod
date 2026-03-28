@@ -24,7 +24,9 @@ replace github.com/nocodeleaks/quepasa/webserver => ../webserver
 
 replace github.com/nocodeleaks/quepasa/whatsmeow => ../whatsmeow
 
-go 1.25.0
+go 1.24.0
+
+toolchain go1.24.2
 
 require (
 	github.com/joho/godotenv v1.5.1
@@ -35,7 +37,7 @@ require (
 
 require (
 	github.com/go-chi/chi/v5 v5.2.3 // indirect
-	golang.org/x/sys v0.41.0 // indirect
+	golang.org/x/sys v0.39.0 // indirect
 )
 
 replace github.com/nocodeleaks/quepasa/library => ../library
