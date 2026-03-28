@@ -15,6 +15,10 @@ type QpGroupSettings struct {
 	// nil = WhatsApp default; true = all members; false = only admins.
 	AllMembersCanAddMembers *bool
 
+	// JoinApprovalRequired controls whether new members must be approved before joining.
+	// nil = WhatsApp default; true = approval required; false = no approval needed.
+	JoinApprovalRequired *bool
+
 	// GenerateInviteLink if true, generates and returns the group invite link after creation.
 	GenerateInviteLink bool
 }

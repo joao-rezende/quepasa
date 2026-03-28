@@ -640,6 +640,9 @@ const docTemplate = `{
                                 "invite_link": {
                                     "type": "boolean"
                                 },
+                                "join_approval_required": {
+                                    "type": "boolean"
+                                },
                                 "participants": {
                                     "type": "array",
                                     "items": {

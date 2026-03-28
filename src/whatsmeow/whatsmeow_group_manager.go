@@ -452,6 +452,11 @@ func (gm *WhatsmeowGroupManager) CreateGroupWithSettings(title string, participa
 		req.IsAnnounce = !*settings.AllMembersCanSendMessages
 	}
 
+	// IsJoinApprovalRequired = true means new members must be approved before joining.
+	if settings.JoinApprovalRequired != nil {
+		req.IsJoinApprovalRequired = *settings.JoinApprovalRequired
+	}
+
 	// Create the group
 	groupInfo, err := client.CreateGroup(context.TODO(), req)
 	if err != nil {

@@ -377,7 +377,7 @@ func SetGroupPhotoController(w http.ResponseWriter, r *http.Request) {
 //	@Tags			Groups
 //	@Accept			json
 //	@Produce		json
-//	@Param			request	body		object{title=string,participants=[]string,all_members_can_edit_info=bool,all_members_can_send_messages=bool,all_members_can_add_members=bool,invite_link=bool}	true	"Advanced group creation request"
+//	@Param			request	body		object{title=string,participants=[]string,all_members_can_edit_info=bool,all_members_can_send_messages=bool,all_members_can_add_members=bool,join_approval_required=bool,invite_link=bool}	true	"Advanced group creation request"
 //	@Success		200		{object}	models.QpSingleGroupResponse
 //	@Failure		400		{object}	models.QpResponse
 //	@Security		ApiKeyAuth
@@ -395,12 +395,13 @@ func CreateGroupAdvancedController(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var request struct {
-		Title                    string   `json:"title"`
-		Participants             []string `json:"participants"`
-		AllMembersCanEditInfo    *bool    `json:"all_members_can_edit_info"`
-		AllMembersCanSendMessages *bool   `json:"all_members_can_send_messages"`
-		AllMembersCanAddMembers  *bool    `json:"all_members_can_add_members"`
-		InviteLink               bool     `json:"invite_link"`
+		Title                     string   `json:"title"`
+		Participants              []string `json:"participants"`
+		AllMembersCanEditInfo     *bool    `json:"all_members_can_edit_info"`
+		AllMembersCanSendMessages *bool    `json:"all_members_can_send_messages"`
+		AllMembersCanAddMembers   *bool    `json:"all_members_can_add_members"`
+		JoinApprovalRequired      *bool    `json:"join_approval_required"`
+		InviteLink                bool     `json:"invite_link"`
 	}
 
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
@@ -431,10 +432,11 @@ func CreateGroupAdvancedController(w http.ResponseWriter, r *http.Request) {
 	formattedParticipants := whatsapp.PhonesToWids(request.Participants)
 
 	settings := whatsapp.QpGroupSettings{
-		AllMembersCanEditInfo:    request.AllMembersCanEditInfo,
+		AllMembersCanEditInfo:     request.AllMembersCanEditInfo,
 		AllMembersCanSendMessages: request.AllMembersCanSendMessages,
-		AllMembersCanAddMembers:  request.AllMembersCanAddMembers,
-		GenerateInviteLink:       request.InviteLink,
+		AllMembersCanAddMembers:   request.AllMembersCanAddMembers,
+		JoinApprovalRequired:      request.JoinApprovalRequired,
+		GenerateInviteLink:        request.InviteLink,
 	}
 
 	groupInfo, inviteLink, err := server.GetGroupManager().CreateGroupWithSettings(request.Title, formattedParticipants, settings)
