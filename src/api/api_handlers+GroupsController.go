@@ -368,6 +368,91 @@ func SetGroupPhotoController(w http.ResponseWriter, r *http.Request) {
 
 // endregion
 
+//region CONTROLLER - CREATE GROUP ADVANCED
+
+// CreateGroupAdvancedController creates a new WhatsApp group with additional permission settings.
+//
+//	@Summary		Create a new group with advanced settings
+//	@Description	Creates a new WhatsApp group with specified title, participants, and optional permission settings
+//	@Tags			Groups
+//	@Accept			json
+//	@Produce		json
+//	@Param			request	body		object{title=string,participants=[]string,all_members_can_edit_info=bool,all_members_can_send_messages=bool,all_members_can_add_members=bool,join_approval_required=bool,invite_link=bool}	true	"Advanced group creation request"
+//	@Success		200		{object}	models.QpSingleGroupResponse
+//	@Failure		400		{object}	models.QpResponse
+//	@Security		ApiKeyAuth
+//	@Router			/groups/createadvanced [post]
+func CreateGroupAdvancedController(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
+	response := &models.QpSingleGroupResponse{}
+
+	server, err := GetServer(r)
+	if err != nil {
+		response.ParseError(err)
+		RespondInterface(w, response)
+		return
+	}
+
+	var request struct {
+		Title                     string   `json:"title"`
+		Participants              []string `json:"participants"`
+		AllMembersCanEditInfo     *bool    `json:"all_members_can_edit_info"`
+		AllMembersCanSendMessages *bool    `json:"all_members_can_send_messages"`
+		AllMembersCanAddMembers   *bool    `json:"all_members_can_add_members"`
+		JoinApprovalRequired      *bool    `json:"join_approval_required"`
+		InviteLink                bool     `json:"invite_link"`
+	}
+
+	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
+		response.ParseError(err)
+		RespondInterface(w, response)
+		return
+	}
+
+	if request.Title == "" {
+		response.ParseError(fmt.Errorf("title is required"))
+		RespondInterface(w, response)
+		return
+	}
+
+	// WhatsApp enforces a 25 character limit on group names
+	if len(request.Title) > 25 {
+		response.ParseError(fmt.Errorf("group title is limited to 25 characters"))
+		RespondInterface(w, response)
+		return
+	}
+
+	if len(request.Participants) == 0 {
+		response.ParseError(fmt.Errorf("participants are required"))
+		RespondInterface(w, response)
+		return
+	}
+
+	formattedParticipants := whatsapp.PhonesToWids(request.Participants)
+
+	settings := whatsapp.QpGroupSettings{
+		AllMembersCanEditInfo:     request.AllMembersCanEditInfo,
+		AllMembersCanSendMessages: request.AllMembersCanSendMessages,
+		AllMembersCanAddMembers:   request.AllMembersCanAddMembers,
+		JoinApprovalRequired:      request.JoinApprovalRequired,
+		GenerateInviteLink:        request.InviteLink,
+	}
+
+	groupInfo, inviteLink, err := server.GetGroupManager().CreateGroupWithSettings(request.Title, formattedParticipants, settings)
+	if err != nil {
+		response.ParseError(err)
+		RespondInterface(w, response)
+		return
+	}
+
+	response.GroupInfo = groupInfo
+	response.InviteLink = inviteLink
+	RespondSuccess(w, response)
+}
+
+//endregion
+
 // UpdateGroupParticipantsController handles adding, removing, promoting, and demoting group members
 //
 //	@Summary		Update group participants

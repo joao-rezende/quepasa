@@ -1,5 +1,14 @@
 package whatsapp
 
+// QpGroupSettings holds optional settings for group creation.
+type QpGroupSettings struct {
+	AllMembersCanEditInfo *bool
+	AllMembersCanSendMessages *bool
+	AllMembersCanAddMembers *bool
+	JoinApprovalRequired *bool
+	GenerateInviteLink bool
+}
+
 // WhatsappGroupManagerInterface defines the interface for group management operations
 // This interface should be implemented by the group manager in the whatsmeow package
 type WhatsappGroupManagerInterface interface {
@@ -20,6 +29,10 @@ type WhatsappGroupManagerInterface interface {
 
 	// Create group with extended options (map-based for QP level)
 	CreateGroupExtendedWithOptions(options map[string]interface{}) (interface{}, error)
+
+	// Create a group with additional permission settings.
+	// Returns the group info and, when settings.GenerateInviteLink is true, the invite link.
+	CreateGroupWithSettings(title string, participants []string, settings QpGroupSettings) (groupInfo interface{}, inviteLink string, err error)
 
 	// Update Group Name
 	UpdateGroupSubject(string, string) (interface{}, error)

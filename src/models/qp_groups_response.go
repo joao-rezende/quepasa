@@ -8,8 +8,9 @@ type QpGroupsResponse struct {
 
 type QpSingleGroupResponse struct {
 	QpResponse
-	Total     int         `json:"total,omitempty"`
-	GroupInfo interface{} `json:"groupinfo,omitempty"`
+	Total      int         `json:"total,omitempty"`
+	GroupInfo  interface{} `json:"groupinfo,omitempty"`
+	InviteLink string      `json:"invite_link,omitempty"`
 }
 
 type QpParticipantResponse struct {

@@ -165,6 +165,9 @@ func RegisterAPIControllers(r chi.Router) {
 		// Create a new group.
 		r.Post(endpoint+"/groups/create", CreateGroupController)
 
+		// Create a new group with advanced permission settings.
+		r.Post(endpoint+"/groups/createadvanced", CreateGroupAdvancedController)
+
 		// Leave group
 		r.Post(endpoint+"/groups/leave", LeaveGroupController)
 
